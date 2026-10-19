@@ -1,0 +1,56 @@
+[package]
+name = "ui-text-edit"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.85"
+authors = ["Wyatt Au <wyatt_au@protonmail.com>"]
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/WyattAu/ui-text-edit"
+homepage = "https://github.com/WyattAu/ui-text-edit"
+documentation = "https://docs.rs/ui-text-edit"
+description = "Text-field semantics for Rust GUIs: a buffer-agnostic TextBuffer, a grapheme-correct caret/selection/edit model, and an a11y-state bridge. Composes input-kit for IME. Not a code editor"
+readme = "README.md"
+keywords = ["textfield", "unicode", "accessibility", "input", "buffer"]
+categories = ["gui", "text-processing"]
+exclude = [".github/", "supply-chain/"]
+
+# Layer model: docs/layers.md in WyattAu/engineering-standards.
+# L2 — domain. Estate deps: `input-kit` L1 (composition) and `a11y-kit` L1
+# (the tree, behind the bridge), both optional so a consumer can take only the
+# buffer. Declared L2 because a text field is a domain concept, not a
+# substrate: it needs composition semantics to be correct at all.
+[package.metadata.layers]
+tier = "L2"
+
+[dependencies]
+input-kit = { version = "0.1", default-features = false }
+
+[dependencies.a11y-kit]
+version = "0.2"
+optional = true
+
+[features]
+default = []
+# The a11y-state bridge: drive an `a11y_kit` node's name/value/busy from a
+# text field. Optional so a consumer that only wants the buffer does not pull
+# the a11y tree in.
+a11y = ["dep:a11y-kit"]
+
+[lints.rust]
+missing_docs = "deny"
+unsafe_code = "deny"
+
+# Text arriving here is user input from a windowing system. Every operation is
+# total and every offset is a grapheme index, so there is no path that indexes
+# out of bounds or panics. Test targets lift these at file level.
+[lints.clippy]
+unwrap_used = "deny"
+expect_used = "deny"
+panic = "deny"
+indexing_slicing = "deny"
+undocumented_unsafe_blocks = "deny"
+
+[profile.release]
+lto = "fat"
+codegen-units = 1
+strip = true
