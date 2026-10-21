@@ -42,7 +42,10 @@ impl Selection {
     /// A collapsed caret at `at`.
     #[must_use]
     pub fn caret(at: usize) -> Self {
-        Self { anchor: at, caret: at }
+        Self {
+            anchor: at,
+            caret: at,
+        }
     }
 
     /// The selection from `from` to `to`, in either order.
@@ -416,7 +419,11 @@ mod tests {
         let mut f = field_from_start("cafe\u{301}");
         assert!(f.delete_forward());
         assert_eq!(f.text(), "afe\u{301}", "the e and its mark went together");
-        assert_eq!(f.caret(), 0, "the caret does not move when deleting forward");
+        assert_eq!(
+            f.caret(),
+            0,
+            "the caret does not move when deleting forward"
+        );
         // At the end there is nothing forward to delete.
         f.move_to_end();
         assert!(!f.delete_forward());
@@ -454,7 +461,11 @@ mod tests {
         f.select_left(2);
         let sel = f.selection();
         assert_eq!((sel.anchor, sel.caret), (2, 0));
-        assert_eq!(f.selection_text(), "he", "a backwards selection reads correctly");
+        assert_eq!(
+            f.selection_text(),
+            "he",
+            "a backwards selection reads correctly"
+        );
 
         // Extending left again is a no-op, because the caret is already at the
         // leftmost position and the anchor is the fixed end. This asymmetry is
@@ -516,7 +527,11 @@ mod tests {
     fn extending_past_the_end_clamps_rather_than_panicking() {
         let mut f = field_from_start("ab");
         f.select_right(99);
-        assert_eq!(f.selection_text(), "ab", "a huge selection is the whole field");
+        assert_eq!(
+            f.selection_text(),
+            "ab",
+            "a huge selection is the whole field"
+        );
         assert_eq!(f.selection().caret, 2, "the caret clamped to the end");
         // Collapsing to the start again, then past it.
         f.select_left(99);

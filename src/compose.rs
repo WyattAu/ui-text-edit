@@ -9,8 +9,8 @@
 //! caret depends on the platform's cursor unit. That last part is the point of
 //! routing through `input-kit` rather than storing a preedit offset here.
 
-use crate::field::TextField;
 use crate::buffer::TextBuffer;
+use crate::field::TextField;
 use input_kit::{Composer, InputEvent, Output, Preedit};
 
 /// What the caller should do after handing an event to the field.
@@ -195,7 +195,11 @@ mod tests {
         f.handle(InputEvent::Commit("cafe\u{301}".into()));
         assert_eq!(f.field().len(), 4);
         assert!(f.field_mut().backspace());
-        assert_eq!(f.text(), "caf", "the e and its combining mark went together");
+        assert_eq!(
+            f.text(),
+            "caf",
+            "the e and its combining mark went together"
+        );
     }
 
     #[test]
@@ -262,7 +266,10 @@ mod tests {
     fn a_direct_insert_while_composing_aborts_the_composition() {
         let mut f = composing_field_from("");
         f.handle(InputEvent::Preedit(Preedit::at_end("か")));
-        assert_eq!(f.handle(InputEvent::Insert("x".into())), FieldUpdate::Edited);
+        assert_eq!(
+            f.handle(InputEvent::Insert("x".into())),
+            FieldUpdate::Edited
+        );
         assert_eq!(f.text(), "x");
         assert!(!f.is_composing(), "the preedit did not interleave");
     }
@@ -270,8 +277,15 @@ mod tests {
     #[test]
     fn an_empty_preedit_does_not_disturb_the_field() {
         let mut f = composing_field_from("ab");
-        assert_eq!(f.handle(InputEvent::Preedit(Preedit::empty())), FieldUpdate::Idle);
-        assert_eq!(f.text(), "ab", "an empty preedit must not disturb the field");
+        assert_eq!(
+            f.handle(InputEvent::Preedit(Preedit::empty())),
+            FieldUpdate::Idle
+        );
+        assert_eq!(
+            f.text(),
+            "ab",
+            "an empty preedit must not disturb the field"
+        );
         assert!(!f.is_composing());
     }
 }

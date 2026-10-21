@@ -62,7 +62,7 @@ pub mod field;
 
 pub use buffer::{StringBuffer, TextBuffer};
 pub use compose::{ComposingField, FieldUpdate};
-pub use field::{Selection, StringField, TextField, field_from, field_from_start};
+pub use field::{field_from, field_from_start, Selection, StringField, TextField};
 
 /// The estate layer this crate occupies.
 pub const LAYER: &str = "L2";

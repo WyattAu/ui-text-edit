@@ -106,12 +106,11 @@ pub fn a11y_node_for_field<B: TextBuffer>(
     name: &str,
     id: NodeId,
 ) -> A11yNode {
-    let mut node = A11yNode::new(id, role_for(field), name)
-        .with_states(States {
-            required: false,
-            busy: false,
-            ..States::default()
-        });
+    let mut node = A11yNode::new(id, role_for(field), name).with_states(States {
+        required: false,
+        busy: false,
+        ..States::default()
+    });
     node.name = format!("{name}: {}", accessible_value(field));
     node
 }
@@ -122,16 +121,12 @@ pub fn a11y_node_for_field<B: TextBuffer>(
 /// and one that has committed is not, with no way for the two to disagree.
 #[cfg(feature = "a11y")]
 #[must_use]
-pub fn a11y_node_for<B: TextBuffer>(
-    field: &ComposingField<B>,
-    name: &str,
-) -> A11yNode {
+pub fn a11y_node_for<B: TextBuffer>(field: &ComposingField<B>, name: &str) -> A11yNode {
     let busy = is_busy(field);
-    let mut node = A11yNode::new(NodeId(0), role_for(field.field()), name)
-        .with_states(States {
-            busy,
-            ..States::default()
-        });
+    let mut node = A11yNode::new(NodeId(0), role_for(field.field()), name).with_states(States {
+        busy,
+        ..States::default()
+    });
     node.name = format!("{name}: {}", accessible_value(field.field()));
     node
 }
@@ -182,7 +177,10 @@ mod tests {
 
         f.handle(InputEvent::Preedit(Preedit::at_end("にほ")));
         let node = a11y_node_for(&f, "Page");
-        assert!(node.states.busy, "the preedit must not be announced as the value");
+        assert!(
+            node.states.busy,
+            "the preedit must not be announced as the value"
+        );
     }
 
     #[cfg(feature = "a11y")]
@@ -201,7 +199,11 @@ mod tests {
         let f = crate::field::TextField::new(StringBuffer::from_text("hi"));
         let node = a11y_node_for_field(&f, "Label", a11y_kit::NodeId(1));
         let mut tree = A11yTree::new();
-        tree.insert(a11y_kit::A11yNode::new(a11y_kit::NodeId(0), a11y_kit::A11yRole::Window, "Win"));
+        tree.insert(a11y_kit::A11yNode::new(
+            a11y_kit::NodeId(0),
+            a11y_kit::A11yRole::Window,
+            "Win",
+        ));
         let mut node = node;
         node.parent = Some(a11y_kit::NodeId(0));
         node.states.focused = true;
