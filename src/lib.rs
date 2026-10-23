@@ -13,9 +13,11 @@
 //! - [`StringBuffer`] / [`TextBuffer`] — where the text lives, behind a trait,
 //!   so a rope or a piece table can replace it without touching a caller.
 //! - [`TextField`] — one caret, one optional selection, and the editing
-//!   operations a form field needs. No multiple carets, no transactions, no
-//!   revision tree, no undo: those are an editing engine's job and the estate
-//!   has no engine to wrap.
+//!   operations a form field needs. No multiple carets, no revision tree:
+//!   those are an editing engine's job and the estate has no engine to wrap.
+//! - [`journal::JournaledField`] — optional linear undo/redo over any
+//!   field, snapshot-based so combining marks, IME merges, and every other
+//!   segmentation surprise cannot corrupt the history.
 //! - [`ComposingField`] — a field wired to `input-kit`'s IME composer, so a
 //!   commit is an ordinary insert and there is no second code path.
 //! - [`bridge`] — drives an `a11y_kit` node's value and `busy` state from a
@@ -59,10 +61,14 @@ pub mod bridge;
 pub mod buffer;
 pub mod compose;
 pub mod field;
+pub mod journal;
+pub mod validate;
 
 pub use buffer::{StringBuffer, TextBuffer};
 pub use compose::{ComposingField, FieldUpdate};
 pub use field::{field_from, field_from_start, Selection, StringField, TextField};
+pub use journal::{Edit, Journal, JournaledField};
+pub use validate::{Chain, MaxLength, Reject, Validator};
 
 /// The estate layer this crate occupies.
 pub const LAYER: &str = "L2";
