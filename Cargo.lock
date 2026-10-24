@@ -72,7 +72,7 @@ dependencies = [
 
 [[package]]
 name = "ui-text-edit"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "a11y-kit",
  "input-kit",
