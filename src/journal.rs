@@ -218,7 +218,7 @@ impl<B: TextBuffer> JournaledField<B> {
     pub fn replace_all(&mut self, text: &str) {
         let before = self.field.selection();
         let text_before = self.field.text().to_owned();
-        let len = self.field.len_clusters();
+        let len = self.field.buffer().len_clusters();
         self.field.buffer_mut().replace(0..len, text);
         self.record(text_before, before);
     }
