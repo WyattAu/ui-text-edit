@@ -209,6 +209,20 @@ impl<B: TextBuffer> JournaledField<B> {
         self.record(text_before, before);
     }
 
+    /// Replace the entire value with `text` — journaled.
+    ///
+    /// The sync-point for hosts that own an input surface (a toolkit's own
+    /// text widget) and hand this crate the *accepted* value after
+    /// validation: the whole value is one edit, so an undo removes the
+    /// accepted batch whole.
+    pub fn replace_all(&mut self, text: &str) {
+        let before = self.field.selection();
+        let text_before = self.field.text().to_owned();
+        let len = self.field.len_clusters();
+        self.field.buffer_mut().replace(0..len, text);
+        self.record(text_before, before);
+    }
+
     /// Undo the most recent edit. Returns whether anything was undone.
     pub fn undo(&mut self) -> bool {
         let Some(edit) = self.journal.pop_undo() else {
